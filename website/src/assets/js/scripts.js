@@ -81,6 +81,8 @@ document.addEventListener("DOMContentLoaded", function () {
       'reg add "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge" /v "EdgeAssetDeliveryServiceEnabled" /t REG_DWORD /d 0 /f',
       'reg add "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge" /v "CryptoWalletEnabled" /t REG_DWORD /d 0 /f',
       'reg add "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge" /v "WalletDonationEnabled" /t REG_DWORD /d 0 /f',
+      'reg add "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge" /v "HubsSidebarEnabled" /t "REG_DWORD" /d "0" /f',
+      'reg add "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge" /v "CopilotPageAction" /t "REG_DWORD" /d "0" /f',
     ],
     edge: [
       "powershell -NoProfile -Command \"Write-Host '-- Uninstalling Edge' -ForegroundColor Green\"",
@@ -98,7 +100,6 @@ document.addEventListener("DOMContentLoaded", function () {
       'reg add "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Shell Extensions\\Blocked" /v "{CB3B0003-8088-4EDE-8769-8B354AB2FF8C}" /t "REG_SZ" /d "" /f',
       'reg add "HKLM\\SOFTWARE\\Microsoft\\Windows\\Shell\\Copilot" /v "IsCopilotAvailable" /t "REG_DWORD" /d "0" /f',
       'reg add "HKCU\\Software\\Microsoft\\Windows\\Shell\\Copilot\\BingChat" /v "IsUserEligible" /t "REG_DWORD" /d "0" /f',
-      'reg add "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge" /v "HubsSidebarEnabled" /t "REG_DWORD" /d "0" /f',
     ],
     widgets: [
       "powershell -NoProfile -Command \"Write-Host '-- Uninstalling Widgets' -ForegroundColor Green\"",
@@ -201,7 +202,26 @@ document.addEventListener("DOMContentLoaded", function () {
     ],
     recall: [
       "powershell -NoProfile -Command \"Write-Host '-- Disabling Recall' -ForegroundColor Green\"",
-      "DISM /Online /Disable-Feature /FeatureName:Recall",
+      "DISM /Online /Disable-Feature /NoRestart /FeatureName:Recall",
+      `powershell -NoProfile -ExecutionPolicy Bypass -Command "$recallTasks = @('\\Microsoft\\Windows\\WindowsAI\\*', '\\Microsoft\\Windows\\Recall\\*'); foreach ($taskPath in $recallTasks) { try { $tasks = Get-ScheduledTask -TaskPath $taskPath -ErrorAction SilentlyContinue; if ($tasks) { $tasks | Unregister-ScheduledTask -Confirm:$false -ErrorAction Stop; $taskCount = ($tasks | Measure-Object).Count; Write-Host \\"Removed $taskCount task(s) from: $taskPath\\" -ForegroundColor Green; } } catch { Write-Host \\"Could not remove tasks from: $taskPath\\" -ForegroundColor Red; } }"`,
+      'reg add "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsAI" /v "DisableAIDataAnalysis" /t REG_DWORD /d 1 /f',
+    ],
+    notepadrewrite: [
+      "powershell -NoProfile -Command \"Write-Host '-- Removing AI from Copilot' -ForegroundColor Green\"",
+      'reg add "HKLM\\Software\\Policies\\WindowsNotepad" /v "DisableAIFeatures" /t REG_DWORD /d 1 /f',
+      'reg add "HKCU\\Software\\Microsoft\\Notepad" /v "ShowRewriteButton" /t REG_DWORD /d 0 /f',
+    ],
+    aiappxpackages: [
+      "powershell -NoProfile -Command \"Write-Host '-- Removing AI AppX Packages' -ForegroundColor Green\"",
+      `powershell -NoProfile -ExecutionPolicy Bypass -Command "$aiPackages = @('Microsoft.Windows.Ai.Copilot.Provider','Microsoft.Copilot','Microsoft.WindowsAiFoundation','Microsoft.Windows.Recall'); foreach ($package in $aiPackages) { try { $removed = $false; $appxPackages = Get-AppxPackage -Name $package -AllUsers -ErrorAction SilentlyContinue; if ($appxPackages) { $appxPackages | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue; $removed = $true; } $provisionedPackages = Get-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue | Where-Object DisplayName -like $package; if ($provisionedPackages) { $provisionedPackages | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue; $removed = $true; } if ($removed) { Write-Host 'Removed: ' $package; } } catch { Write-Host 'Could not remove: ' $package -ForegroundColor Red; } }"`,
+    ],
+    hideai: [
+      "powershell -NoProfile -Command \"Write-Host '-- Hiding Copilot Button in Explorer' -ForegroundColor Green\"",
+      'reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced" /v "ShowCopilotButton" /t REG_DWORD /d 0 /f ',
+    ],
+    aifiles: [
+      "powershell -NoProfile -Command \"Write-Host '-- Removing AI Files' -ForegroundColor Green\"",
+      `powershell -NoProfile -ExecutionPolicy Bypass -Command "$aiPaths=@(\\"$env:ProgramFiles\\WindowsApps\\Microsoft.Copilot*\\",\\"$env:ProgramFiles\\WindowsApps\\Microsoft.Windows.Ai*\\",\\"$env:LocalAppData\\Packages\\Microsoft.Copilot*\\",\\"$env:LocalAppData\\Packages\\Microsoft.Windows.Ai*\\",\\"$env:SystemRoot\\SystemApps\\Microsoft.Windows.Copilot*\\"); foreach ($path in $aiPaths) { if (Test-Path $path) { try { Remove-Item -Path $path -Recurse -Force -ErrorAction SilentlyContinue; Write-Host \\"Removed: $path\\" -ForegroundColor Green } catch { Write-Host \\"Could not remove: $path\\" -ForegroundColor Red } } }"`,
     ],
     iexplorer: [
       "powershell -NoProfile -Command \"Write-Host '-- Disabling Internet Explorer' -ForegroundColor Green\"",
@@ -730,8 +750,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     cleantemp: [
       "powershell -NoProfile -Command \"Write-Host '-- Deleting Temp files' -ForegroundColor Green\"",
-      "del /s /f /q c:\\windows\\temp\\*.* > null 2>&1",
-      "del /s /f /q C:\\WINDOWS\\Prefetch > null 2>&1",
+      "del /s /f /q c:\\windows\\temp\\*.* > nul 2>&1",
+      "del /s /f /q C:\\WINDOWS\\Prefetch > nul 2>&1",
     ],
     cleanmgr: [
       "powershell -NoProfile -Command \"Write-Host '-- Running Disk Clean-up' -ForegroundColor Green\"",
@@ -768,6 +788,16 @@ document.addEventListener("DOMContentLoaded", function () {
       "ipconfig /flushdns",
       "ipconfig /release > nul 2>&1",
       "ipconfig /renew > nul 2>&1",
+    ],
+    balanced: [
+      "powershell -NoProfile -Command \"Write-Host '-- Set Balanced Power Plan' -ForegroundColor Green\"",
+      `powershell -command "$balanced = powercfg -list | Select-String -Pattern 'Balanced'; if ($balanced) { echo '-- - Power plan already exists' } else { echo '-- - Enabling Balanced'; $output = powercfg -duplicatescheme 381b4222-f694-41f0-9685-ff5bb260df2e 2>&1; if ($output -match 'Unable to create a new power scheme' -or $output -match 'The power scheme, subgroup or setting specified does not exist') { powercfg -RestoreDefaultSchemes } }"`,
+      `powershell -command "$balancedGUID = (powercfg -list | Select-String -Pattern 'Balanced').Line.Split()[3]; echo '-- - Activating Balanced'; powercfg -setactive $balancedGUID"`,
+    ],
+    highperformance: [
+      "powershell -NoProfile -Command \"Write-Host '-- Set High Performance Power Plan' -ForegroundColor Green\"",
+      `powershell -command "$highPerformance = powercfg -list | Select-String -Pattern 'High performance'; if ($highPerformance) { echo '-- - Power plan already exists' } else { echo '-- - Enabling High Performance'; $output = powercfg -duplicatescheme 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c 2>&1; if ($output -match 'Unable to create a new power scheme' -or $output -match 'The power scheme, subgroup or setting specified does not exist') { powercfg -RestoreDefaultSchemes } }"`,
+      `powershell -command "$highPlanGUID = (powercfg -list | Select-String -Pattern 'High performance').Line.Split()[3]; echo '-- - Activating High Performance'; powercfg -setactive $highPlanGUID"`,
     ],
     ultimateperformance: [
       "powershell -NoProfile -Command \"Write-Host '-- Set Ultimate Performance Power Plan' -ForegroundColor Green\"",
@@ -1083,6 +1113,10 @@ document.addEventListener("DOMContentLoaded", function () {
     "xbox",
     "consumerfeatures",
     "recall",
+    "notepadrewrite",
+    "aiappxpackages",
+    "hideai",
+    "aifiles",
     "iexplorer",
     "hyperv",
     "faxscan",
@@ -1158,6 +1192,8 @@ document.addEventListener("DOMContentLoaded", function () {
     "dism",
     "resetnetwork",
 
+    "balanced",
+    "highperformance",
     "ultimateperformance",
     "manualservices",
     "transparency",
@@ -1279,6 +1315,10 @@ const presets = {
     "msstoreupdates",
     "debloatedge",
     "copilot",
+    "notepadrewrite",
+    "aiappxpackages",
+    "hideai",
+    "aifiles",
     "taskbarwidgets",
     "accinfoaccess",
     "contactsaccess",
@@ -1339,6 +1379,10 @@ const presets = {
     "onedrive",
     "debloatedge",
     "copilot",
+    "notepadrewrite",
+    "aiappxpackages",
+    "hideai",
+    "aifiles",
     "taskbarwidgets",
     "locationaccess",
     "accinfoaccess",

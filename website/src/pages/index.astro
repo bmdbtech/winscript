@@ -131,14 +131,42 @@ const packageManagers = [
                 inputId: "hyperv",
                 description: "VMs might not work anymore after disabling this feature.",
               },
-              {
-                title: "Disable Recall",
-                inputId: "recall",
-              },
               { title: "Disable Internet Explorer", inputId: "iexplorer" },
 
               { title: "Disable Fax & Scan", inputId: "faxscan" },
               { title: "Disable Media Player", inputId: "mediaplayer" },
+            ]}
+          />
+
+          <ScriptGroup
+            title="Windows AI"
+            description="Disable Windows AI features."
+            icon="/icons/debloat/copilot.png"
+            tools={[
+              {
+                title: "Hide Copilot Button in Explorer",
+                inputId: "hideai",
+              },
+              {
+                title: "Remove AI Packages",
+                inputId: "aiappxpackages",
+              },
+              {
+                title: "Remove Copilot",
+                inputId: "copilot",
+              },
+              {
+                title: "Remove Recall",
+                inputId: "recall",
+              },
+              {
+                title: "Disable Notepad AI",
+                inputId: "notepadrewrite",
+              },
+              {
+                title: "Remove AI Files",
+                inputId: "aifiles",
+              },
             ]}
           />
 
@@ -175,13 +203,6 @@ const packageManagers = [
             description="Uninstalls the Edge Chromium browser."
             inputId="edge"
             icon="/icons/debloat/edge.png"
-          />
-
-          <ScriptToggle
-            title="Remove Copilot"
-            description="Removes the Copilot AI package."
-            inputId="copilot"
-            icon="/icons/debloat/copilot.png"
           />
 
           <ScriptToggle
@@ -479,11 +500,25 @@ const packageManagers = [
             ]}
           />
 
-          <ScriptToggle
-            title="Add Ultimate Performance"
-            inputId="ultimateperformance"
+          <ScriptGroup
+            title="Choose Power Plan"
+            description=""
             icon="/icons/performance/ultimate.png"
-            description="Activates the Ultimate Performance power plan."
+            tools={[
+              { title: "Balanced", inputId: "balanced", radio: true, group: "powerplan" },
+              {
+                title: "High Performance",
+                inputId: "highperformance",
+                radio: true,
+                group: "powerplan",
+              },
+              {
+                title: "Ultimate Performance",
+                inputId: "ultimateperformance",
+                radio: true,
+                group: "powerplan",
+              },
+            ]}
           />
 
           <ScriptToggle
@@ -664,6 +699,10 @@ const packageManagers = [
                 inputId: "Chromium",
               },
               {
+                title: "Install Falkon",
+                inputId: "Falkon",
+              },
+              {
                 title: "Install Firefox",
                 inputId: "Firefox",
               },
@@ -676,6 +715,7 @@ const packageManagers = [
                 inputId: "LibreWolf",
               },
               { title: "Install Opera", inputId: "Opera" },
+              { title: "Install Palemoon", inputId: "Palemoon" },
               {
                 title: "Install Thorium",
                 inputId: "Thorium",
@@ -692,6 +732,10 @@ const packageManagers = [
               {
                 title: "Install Waterfox",
                 inputId: "Waterfox",
+              },
+              {
+                title: "Install Zen Browser",
+                inputId: "ZenBrowser",
               },
             ]}
           />
@@ -737,6 +781,10 @@ const packageManagers = [
                 inputId: "FaceIT",
               },
               {
+                title: "Install Geforce NOW",
+                inputId: "GeforceNOW",
+              },
+              {
                 title: "Install GOG Galaxy",
                 inputId: "GOGGalaxy",
               },
@@ -747,6 +795,10 @@ const packageManagers = [
               {
                 title: "Install Minecraft",
                 inputId: "Minecraft",
+              },
+              {
+                title: "Install Modrinth App",
+                inputId: "Modrinth",
               },
               {
                 title: "Install PlayNite",
@@ -846,6 +898,10 @@ const packageManagers = [
               {
                 title: "Install NileSoft Shell",
                 inputId: "Shell",
+              },
+              {
+                title: "Install Process Lasso",
+                inputId: "ProcessLasso",
               },
               {
                 title: "Install Proton Drive",
@@ -963,19 +1019,30 @@ const packageManagers = [
               { title: "Install foobar2000", inputId: "foobar2000" },
               { title: "Install FreeCAD", inputId: "FreeCAD" },
               { title: "Install HandBrake", inputId: "HandBrake" },
+              {
+                title: "Install Harmonoid",
+                inputId: "Harmonoid",
+                desc: "Not available on Chocolatey.",
+              },
               { title: "Install ImageGlass", inputId: "ImageGlass" },
               { title: "Install iTunes", inputId: "iTunes" },
               { title: "Install Jellyfin", inputId: "Jellyfin" },
               { title: "Install K-Lite Codec Pack", inputId: "KLite" },
+              { title: "Install Kodi", inputId: "Kodi" },
               { title: "Install MediaMonkey", inputId: "MediaMonkey" },
               { title: "Install MuseScore", inputId: "MuseScore" },
+              { title: "Install Nomacs", inputId: "Nomacs" },
               { title: "Install OBS", inputId: "OBS" },
               { title: "Install Plex", inputId: "Plex" },
+              { title: "Install Shotcut", inputId: "Shotcut" },
               { title: "Install Spicetify", inputId: "Spicetify" },
               { title: "Install Spotify", inputId: "Spotify" },
               { title: "Install Stremio", inputId: "Stremio" },
+              { title: "Install TagScanner", inputId: "TagScanner" },
+              { title: "Install Tidal", inputId: "Tidal" },
               { title: "Install VLC", inputId: "VLC" },
               { title: "Install VoiceMeeter", inputId: "VoiceMeeter" },
+              { title: "Install yt-dlp", inputId: "yt-dlp" },
             ]}
           />
 
@@ -983,13 +1050,21 @@ const packageManagers = [
             title="Communication"
             icon="/icons/install/comunication.png"
             apps={[
+              { title: "Install Beeper", inputId: "Beeper" },
+              { title: "Install BetterBird", inputId: "BetterBird" },
+              { title: "Install Chatterino", inputId: "Chatterino" },
               { title: "Install Discord", inputId: "Discord" },
+              { title: "Install Ferdium", inputId: "Ferdium" },
+              { title: "Install Hexchat", inputId: "Hexchat" },
+              { title: "Install Jami", inputId: "Jami" },
+              { title: "Install Linphone", inputId: "Linphone" },
               { title: "Install Signal", inputId: "Signal" },
               { title: "Install Skype", inputId: "Skype" },
               { title: "Install Slack", inputId: "Slack" },
               { title: "Install Teams", inputId: "Teams" },
               { title: "Install Telegram", inputId: "Telegram" },
               { title: "Install Thunderbird", inputId: "Thunderbird" },
+              { title: "Install Viber", inputId: "Viber" },
               { title: "Install Zoom", inputId: "Zoom" },
               { title: "Install Zulip", inputId: "Zulip" },
             ]}
@@ -1014,17 +1089,24 @@ const packageManagers = [
             title="Documents"
             icon="/icons/install/documents.png"
             apps={[
+              { title: "Install Anki", inputId: "Anki" },
               { title: "Install Adobe Acrobat Reader", inputId: "AdobeReader" },
               { title: "Install AFFiNE", inputId: "AFFiNE" },
               { title: "Install FoxIt Reader", inputId: "FoxItReader" },
               { title: "Install Joplin", inputId: "Joplin" },
               { title: "Install LibreOffice", inputId: "LibreOffice" },
               { title: "Install LogSeq", inputId: "LogSeq" },
+              { title: "Install NAPS2", inputId: "NAPS2" },
               { title: "Install Obsidian", inputId: "Obsidian" },
               { title: "Install OpenOffice", inputId: "OpenOffice" },
               { title: "Install PDF24", inputId: "PDF24" },
+              { title: "Install PDFGear", inputId: "PDFGear" },
+              { title: "Install PDFSam", inputId: "PDFSam" },
               { title: "Install simplenote", inputId: "simplenote" },
               { title: "Install SumatraPDF", inputId: "SumatraPDF" },
+              { title: "Install WinMerge", inputId: "WinMerge" },
+              { title: "Install Xournal++", inputId: "Xournal" },
+              { title: "Install Zotero", inputId: "Zotero" },
             ]}
           />
 
@@ -1042,29 +1124,39 @@ const packageManagers = [
             title="For Developers"
             icon="/icons/install/developers.png"
             apps={[
+              { title: "Install Aegisub", inputId: "Aegisub" },
+              { title: "Install Anaconda3", inputId: "Anaconda3" },
               { title: "Install Clink", inputId: "Clink" },
+              { title: "Install CMake", inputId: "CMake" },
               { title: "Install Cursor", inputId: "Cursor" },
               { title: "Install Docker Desktop", inputId: "Docker" },
               { title: "Install Git", inputId: "Git" },
+              { title: "Install Git Extensions", inputId: "GitExtensions" },
               { title: "Install GitHub Desktop", inputId: "GitHub" },
               { title: "Install GitHub CLI", inputId: "GitHubCLI" },
               { title: "Install Go", inputId: "Go" },
               { title: "Install Godot", inputId: "Godot" },
               { title: "Install JDK 8", inputId: "Java" },
+              { title: "Install Lazygit", inputId: "Lazygit" },
+              { title: "Install Miniconda", inputId: "Miniconda" },
               { title: "Install Neovim", inputId: "Neovim" },
               { title: "Install NET 4.8", inputId: "NET48" },
               { title: "Install NET 8", inputId: "NET8" },
               { title: "Install NodeJS", inputId: "NodeJS" },
               { title: "Install Notepad++", inputId: "Notepad++" },
               { title: "Install Oh My Posh", inputId: "OhMyPosh" },
+              { title: "Install Postman", inputId: "Postman" },
+              { title: "Install Pulsar", inputId: "Pulsar" },
               { title: "Install Python 3", inputId: "Python3" },
               { title: "Install Rust", inputId: "Rust" },
               { title: "Install Sublime Text", inputId: "SublimeText" },
+              { title: "Install Vagrant", inputId: "Vagrant" },
               { title: "Install VS Code", inputId: "VSCode" },
               { title: "Install VS Codium", inputId: "VSCodium" },
               { title: "Install Visual Studio", inputId: "VS" },
               { title: "Install WSL 2", inputId: "WSL2" },
               { title: "Install Yarn", inputId: "Yarn" },
+              { title: "Install Zed", inputId: "Zed" },
             ]}
           />
         </Tab>
